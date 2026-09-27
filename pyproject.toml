@@ -1,0 +1,10 @@
+[project]
+name = "it-security-digest"
+version = "0.1.0"
+description = "AI-powered IT and cybersecurity news digest"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
