@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
@@ -23,4 +25,8 @@ class Source(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
+    )
+    articles: Mapped[list["Article"]] = relationship(
+        back_populates="source",
+        cascade="all, delete-orphan",
     )
