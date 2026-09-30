@@ -5,15 +5,23 @@ from sqlalchemy import select
 from app.database.session import async_session_factory
 from app.models.source import Source
 
-
 SOURCES = [
     {
         "name": "BleepingComputer",
         "url": "https://www.bleepingcomputer.com/feed/",
         "source_type": "rss",
     },
+    {
+        "name": "Schneier on Security",
+        "url": "https://www.schneier.com/feed/atom",
+        "source_type": "rss",
+    },
+    {
+        "name": "Microsoft Security Response Center",
+        "url": "https://api.msrc.microsoft.com/update-guide/rss",
+        "source_type": "rss",
+    },
 ]
-
 
 async def main() -> None:
     async with async_session_factory() as session:

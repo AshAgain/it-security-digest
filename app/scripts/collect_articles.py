@@ -33,6 +33,7 @@ async def main() -> None:
         print(f"  received:   {result.received}")
         print(f"  saved:      {result.saved}")
         print(f"  duplicates: {result.duplicates}")
+        print(f"  skipped old: {result.skipped_old}")
         print()
 
         total_received += result.received

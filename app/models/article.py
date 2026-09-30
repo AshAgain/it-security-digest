@@ -54,3 +54,8 @@ class Article(Base):
     source: Mapped["Source"] = relationship(
         back_populates="articles",
     )
+    analysis: Mapped["ArticleAnalysis | None"] = relationship(
+    back_populates="article",
+    uselist=False,
+    cascade="all, delete-orphan",
+    )
