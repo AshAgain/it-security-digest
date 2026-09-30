@@ -24,6 +24,7 @@ class DigestResult:
     not_relevant: int
     markdown_path: Path
     docx_path: Path
+    preview: list[dict]
 
 
 async def build_digest(
@@ -151,6 +152,35 @@ async def build_digest(
         result.scalars().unique().all()
     )
 
+    preview = []
+
+    for article in relevant_articles:
+        if article.analysis is None:
+            continue
+
+        preview.append(
+            {
+                "title": article.title,
+                "url": article.url,
+                "source": (
+                    article.source.name
+                    if article.source
+                    else "Unknown"
+                ),
+                "published_at": (
+                    article.published_at.strftime(
+                        "%Y-%m-%d %H:%M UTC"
+                    )
+                    if article.published_at
+                    else "Unknown"
+                ),
+                "topic": article.analysis.topic,
+                "importance": article.analysis.importance,
+                "summary": article.analysis.summary,
+                "reason": article.analysis.reason,
+            }
+        )
+
     if task_id:
         update_task(
             task_id,
@@ -206,4 +236,5 @@ async def build_digest(
         not_relevant=not_relevant,
         markdown_path=markdown_path,
         docx_path=docx_path,
+        preview=preview,
     )

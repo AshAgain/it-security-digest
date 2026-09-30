@@ -1,7 +1,7 @@
 from pathlib import Path
 import asyncio
 from uuid import uuid4
-
+import traceback
 from fastapi import HTTPException
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse
@@ -66,10 +66,17 @@ async def _run_digest_task(
                 "not_relevant": result.not_relevant,
                 "markdown": "/api/digest/download/markdown",
                 "docx": "/api/digest/download/docx",
+                "preview": result.preview,
             },
         )
 
     except Exception as exc:
+        print(
+            f"\n[ERROR] Digest task {task_id} failed:",
+            flush=True,
+        )
+        traceback.print_exc()
+
         update_task(
             task_id,
             status="failed",

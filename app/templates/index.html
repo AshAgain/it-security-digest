@@ -22,7 +22,7 @@
 
     .container {
         width: 100%;
-        max-width: 900px;
+        max-width: 1000px;
         margin: 0 auto;
         padding: 40px 20px;
     }
@@ -138,23 +138,145 @@
         color: #6b7280;
     }
 
-    /* Result */
+    /* Statistics */
 
-    .result-card {
-        background: #f9fafb;
+    .statistics {
+        display: grid;
+        grid-template-columns: repeat(
+            auto-fit,
+            minmax(160px, 1fr)
+        );
+        gap: 12px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        padding: 16px;
+        border: 1px solid #e5e7eb;
         border-radius: 10px;
-        padding: 20px;
+        background: #f9fafb;
     }
 
-    .result-card h2 {
-        margin-top: 0;
+    .stat-label {
+        display: block;
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 6px;
     }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    /* Topics */
+
+    .topic-section {
+        margin-top: 32px;
+    }
+
+    .topic-title {
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .topic-count {
+        color: #6b7280;
+        font-size: 14px;
+        font-weight: normal;
+    }
+
+    /* Articles */
+
+    .article-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 14px;
+        background: #ffffff;
+    }
+
+    .article-card:hover {
+        border-color: #cbd5e1;
+    }
+
+    .article-title {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+    }
+
+    .article-title a {
+        color: #111827;
+        text-decoration: none;
+    }
+
+    .article-title a:hover {
+        color: #2563eb;
+    }
+
+    .article-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        background: #eef2ff;
+        color: #3730a3;
+    }
+
+    .badge-source {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .badge-high {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-medium {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-low {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .article-section {
+        margin-top: 12px;
+    }
+
+    .article-section-title {
+        margin-bottom: 5px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #374151;
+    }
+
+    .article-section-text {
+        margin: 0;
+        line-height: 1.55;
+        color: #4b5563;
+    }
+
+    /* Download */
 
     .download-links {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
-        margin-top: 20px;
+        margin-top: 30px;
     }
 
     .download-links a {
@@ -170,6 +292,8 @@
         background: #1d4ed8;
     }
 
+    /* Error */
+
     .error {
         padding: 15px;
         border-radius: 8px;
@@ -180,6 +304,10 @@
     .hint {
         margin-top: 8px;
         font-size: 13px;
+        color: #6b7280;
+    }
+
+    .empty-preview {
         color: #6b7280;
     }
 </style>
@@ -198,7 +326,7 @@
 </p>
 
 
-<!-- GigaChat credentials -->
+<!-- GigaChat -->
 
 <div class="card">
 
@@ -427,6 +555,47 @@
 
 
     /*
+     * Escape HTML.
+     *
+     * Text from GigaChat and article sources should
+     * not be inserted into the page as raw HTML.
+     */
+
+    function escapeHtml(value) {
+
+        if (value === null ||
+            value === undefined) {
+
+            return "";
+
+        }
+
+        return String(value)
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /*
      * Update progress bar
      */
 
@@ -563,6 +732,312 @@
             );
 
         }
+
+    }
+
+
+    /*
+     * Convert importance value into Russian label.
+     */
+
+    function getImportanceLabel(
+        importance
+    ) {
+
+        const labels = {
+
+            high: "Высокая",
+
+            medium: "Средняя",
+
+            low: "Низкая"
+
+        };
+
+
+        return (
+            labels[importance] ||
+            importance ||
+            "Не указана"
+        );
+
+    }
+
+
+    /*
+     * Build article HTML.
+     */
+
+    function renderArticle(
+        article
+    ) {
+
+        const importance =
+            article.importance ||
+            "low";
+
+
+        return `
+
+            <article class="article-card">
+
+                <h3 class="article-title">
+
+                    <a
+                        href="${escapeHtml(article.url)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        ${escapeHtml(article.title)}
+                    </a>
+
+                </h3>
+
+
+                <div class="article-meta">
+
+                    <span class="badge badge-source">
+                        ${escapeHtml(article.source)}
+                    </span>
+
+                    <span class="badge">
+                        ${escapeHtml(article.published_at)}
+                    </span>
+
+                    <span class="badge">
+                        ${escapeHtml(article.topic)}
+                    </span>
+
+                    <span class="badge badge-${escapeHtml(importance)}">
+                        Важность:
+                        ${escapeHtml(
+                            getImportanceLabel(
+                                importance
+                            )
+                        )}
+                    </span>
+
+                </div>
+
+
+                <div class="article-section">
+
+                    <div class="article-section-title">
+                        Краткое содержание
+                    </div>
+
+                    <p class="article-section-text">
+                        ${escapeHtml(article.summary)}
+                    </p>
+
+                </div>
+
+
+                <div class="article-section">
+
+                    <div class="article-section-title">
+                        Почему релевантно
+                    </div>
+
+                    <p class="article-section-text">
+                        ${escapeHtml(article.reason)}
+                    </p>
+
+                </div>
+
+            </article>
+
+        `;
+
+    }
+
+
+    /*
+     * Build full digest preview.
+     */
+
+    function renderPreview(
+        result
+    ) {
+
+        const articles =
+            result.preview || [];
+
+
+        if (articles.length === 0) {
+
+            return `
+
+                <div class="result-card">
+
+                    <h2>
+                        Дайджест готов
+                    </h2>
+
+                    <p class="empty-preview">
+                        Релевантных публикаций
+                        не найдено.
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+
+        /*
+         * Group articles by topic.
+         */
+
+        const grouped = {};
+
+
+        for (
+            const article of articles
+        ) {
+
+            const topic =
+                article.topic ||
+                "Other";
+
+
+            if (!grouped[topic]) {
+
+                grouped[topic] = [];
+
+            }
+
+
+            grouped[topic].push(
+                article
+            );
+
+        }
+
+
+        let topicsHtml = "";
+
+
+        for (
+            const [topic, topicArticles]
+            of Object.entries(grouped)
+        ) {
+
+            topicsHtml += `
+
+                <section class="topic-section">
+
+                    <h2 class="topic-title">
+
+                        ${escapeHtml(topic)}
+
+                        <span class="topic-count">
+                            (${topicArticles.length})
+                        </span>
+
+                    </h2>
+
+                    ${topicArticles
+                        .map(renderArticle)
+                        .join("")}
+
+                </section>
+
+            `;
+
+        }
+
+
+        return `
+
+            <div>
+
+                <h2>
+                    Предпросмотр дайджеста
+                </h2>
+
+
+                <div class="statistics">
+
+                    <div class="stat-card">
+
+                        <span class="stat-label">
+                            Статей обработано
+                        </span>
+
+                        <span class="stat-value">
+                            ${result.total_articles}
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <span class="stat-label">
+                            Проанализировано
+                        </span>
+
+                        <span class="stat-value">
+                            ${result.analyzed}
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <span class="stat-label">
+                            Релевантных
+                        </span>
+
+                        <span class="stat-value">
+                            ${result.relevant}
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <span class="stat-label">
+                            Нерелевантных
+                        </span>
+
+                        <span class="stat-value">
+                            ${result.not_relevant}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                ${topicsHtml}
+
+
+                <div class="download-links">
+
+                    <a
+                        href="${escapeHtml(result.markdown)}"
+                        target="_blank"
+                    >
+                        Скачать Markdown
+                    </a>
+
+
+                    <a
+                        href="${escapeHtml(result.docx)}"
+                    >
+                        Скачать DOCX
+                    </a>
+
+                </div>
+
+            </div>
+
+        `;
 
     }
 
@@ -764,66 +1239,11 @@
 
 
                 /*
-                 * Show result
+                 * Show preview
                  */
 
-                resultContainer.innerHTML = `
-
-                    <div class="result-card">
-
-                        <h2>
-                            Дайджест готов
-                        </h2>
-
-                        <p>
-                            Статей обработано:
-                            <strong>
-                                ${result.total_articles}
-                            </strong>
-                        </p>
-
-                        <p>
-                            Проанализировано:
-                            <strong>
-                                ${result.analyzed}
-                            </strong>
-                        </p>
-
-                        <p>
-                            Релевантных:
-                            <strong>
-                                ${result.relevant}
-                            </strong>
-                        </p>
-
-                        <p>
-                            Нерелевантных:
-                            <strong>
-                                ${result.not_relevant}
-                            </strong>
-                        </p>
-
-
-                        <div class="download-links">
-
-                            <a
-                                href="${result.markdown}"
-                                target="_blank"
-                            >
-                                Скачать Markdown
-                            </a>
-
-                            <a
-                                href="${result.docx}"
-                            >
-                                Скачать DOCX
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                `;
+                resultContainer.innerHTML =
+                    renderPreview(result);
 
 
             } catch (error) {
@@ -832,7 +1252,9 @@
 
                     <div class="error">
 
-                        ${error.message}
+                        ${escapeHtml(
+                            error.message
+                        )}
 
                     </div>
 
