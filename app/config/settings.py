@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     postgres_host: str = "localhost"
     postgres_port: int = 5432
 
+    gigachat_credentials: str
+    gigachat_model: str = "GigaChat-3-Ultra"
+
     @property
     def database_url(self) -> str:
         return (
