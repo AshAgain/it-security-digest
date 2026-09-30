@@ -16,18 +16,25 @@ async def get_recent_articles(
     days: int = 7,
     limit: int = 200,
     per_source_limit: int = 70,
+    source_names: list[str] | None = None,
 ) -> list[Article]:
     cutoff_date = datetime.now(timezone.utc) - timedelta(days=days)
 
-    sources_result = await session.execute(
+    sources_query = (
         select(Source)
         .where(Source.is_active.is_(True))
         .order_by(Source.id)
     )
 
+    if source_names:
+        sources_query = sources_query.where(
+            Source.name.in_(source_names)
+        )
+
+    sources_result = await session.execute(sources_query)
     sources = list(sources_result.scalars().all())
 
-    articles: list[Article] = []
+    articles = []
 
     for source in sources:
         result = await session.execute(
@@ -45,8 +52,11 @@ async def get_recent_articles(
         articles.extend(result.scalars().all())
 
     articles.sort(
-        key=lambda article: article.published_at
-        or datetime.min.replace(tzinfo=timezone.utc),
+        key=lambda article: (
+            article.published_at.timestamp()
+            if article.published_at
+            else 0
+        ),
         reverse=True,
     )
 

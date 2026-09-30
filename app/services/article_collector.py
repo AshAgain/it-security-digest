@@ -95,17 +95,22 @@ async def collect_source(
 
 
 async def collect_all_sources(
-    session: AsyncSession,
-) -> list[SourceCollectionResult]:
-    sources_result = await session.execute(
+    session,
+    source_names: list[str] | None = None,
+):
+    query = (
         select(Source)
         .where(Source.is_active.is_(True))
         .order_by(Source.id)
     )
 
+    if source_names:
+        query = query.where(Source.name.in_(source_names))
+
+    sources_result = await session.execute(query)
     sources = sources_result.scalars().all()
 
-    results: list[SourceCollectionResult] = []
+    results = []
 
     for source in sources:
         result = await collect_source(session, source)

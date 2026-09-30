@@ -2,12 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
-
 from app.models.article import Article
-from app.models.article_analysis import ArticleAnalysis
 from app.services.article_topics import TOPICS
 
 
@@ -24,69 +19,58 @@ IMPORTANCE_LABELS = {
 }
 
 
-def format_published_at(published_at: datetime | None) -> str:
+def format_published_at(
+    published_at: datetime | None,
+) -> str:
     if published_at is None:
         return "Unknown"
 
     return published_at.strftime("%Y-%m-%d %H:%M UTC")
 
 
-async def generate_markdown_digest(
-    session: AsyncSession,
+def generate_markdown_digest(
+    articles: list[Article],
+    *,
+    total_analyzed: int,
+    total_relevant: int,
+    total_not_relevant: int,
 ) -> str:
-    result = await session.execute(
-        select(Article)
-        .join(ArticleAnalysis)
-        .options(
-            selectinload(Article.source),
-            selectinload(Article.analysis),
-        )
-        .where(
-            ArticleAnalysis.relevant.is_(True),
-        )
-    )
+    generated_at = datetime.now(timezone.utc)
 
-    articles = list(result.scalars().all())
-
-    articles.sort(
+    sorted_articles = sorted(
+        articles,
         key=lambda article: (
             TOPICS.index(article.analysis.topic)
-            if article.analysis.topic in TOPICS
+            if article.analysis and article.analysis.topic in TOPICS
             else len(TOPICS),
-            IMPORTANCE_ORDER.get(article.analysis.importance, 99),
+            IMPORTANCE_ORDER.get(
+                article.analysis.importance
+                if article.analysis
+                else "low",
+                99,
+            ),
             -(
                 article.published_at.timestamp()
                 if article.published_at
                 else 0
             ),
-        )
-    )
-
-    generated_at = datetime.now(timezone.utc)
-
-    total_relevant = len(articles)
-
-    all_analyses_result = await session.execute(
-        select(ArticleAnalysis)
-    )
-    all_analyses = list(all_analyses_result.scalars().all())
-
-    total_analyzed = len(all_analyses)
-    total_not_relevant = sum(
-        1 for analysis in all_analyses
-        if not analysis.relevant
+        ),
     )
 
     topic_counts: dict[str, int] = {}
 
-    for article in articles:
+    for article in sorted_articles:
+        if article.analysis is None:
+            continue
+
         topic = article.analysis.topic
         topic_counts[topic] = topic_counts.get(topic, 0) + 1
 
-    lines: list[str] = [
+    lines = [
         "# IT / Information Security Digest",
         "",
-        f"**Generated:** {generated_at.strftime('%Y-%m-%d %H:%M UTC')}",
+        f"**Generated:** "
+        f"{generated_at.strftime('%Y-%m-%d %H:%M UTC')}",
         "",
         "## Statistics",
         "",
@@ -98,33 +82,35 @@ async def generate_markdown_digest(
         "",
     ]
 
-    for topic in TOPICS:
-        count = topic_counts.get(topic, 0)
-
-        if count > 0:
-            lines.append(f"- **{topic}** — {count}")
+    if topic_counts:
+        for topic, count in topic_counts.items():
+            lines.append(f"- **{topic}:** {count}")
+    else:
+        lines.append("- No relevant articles found.")
 
     lines.extend(
         [
             "",
+            "## Articles",
+            "",
         ]
     )
 
-    current_topic: str | None = None
-    current_importance: str | None = None
+    if not sorted_articles:
+        lines.append("No relevant articles found.")
+        return "\n".join(lines)
 
-    for article in articles:
-        analysis = article.analysis
+    current_topic = None
 
-        if analysis is None:
+    for article in sorted_articles:
+        if article.analysis is None:
             continue
 
+        analysis = article.analysis
         topic = analysis.topic
-        importance = analysis.importance
 
         if topic != current_topic:
             current_topic = topic
-            current_importance = None
 
             lines.extend(
                 [
@@ -133,37 +119,37 @@ async def generate_markdown_digest(
                 ]
             )
 
-        if importance != current_importance:
-            current_importance = importance
-
-            lines.extend(
-                [
-                    f"### {IMPORTANCE_LABELS.get(importance, importance)}",
-                    "",
-                ]
-            )
+        importance = IMPORTANCE_LABELS.get(
+            analysis.importance,
+            analysis.importance,
+        )
 
         source_name = (
             article.source.name
             if article.source
-            else "Unknown source"
+            else "Unknown"
         )
 
         lines.extend(
             [
-                f"#### {article.title}",
+                f"### {article.title}",
                 "",
-                f"**Source:** {source_name}  ",
-                f"**Published:** {format_published_at(article.published_at)}",
+                f"**Source:** {source_name}",
                 "",
-                analysis.summary,
+                f"**Published:** "
+                f"{format_published_at(article.published_at)}",
                 "",
-                f"[Read article]({article.url})",
+                f"**Importance:** {importance}",
+                "",
+                f"**Summary:** {analysis.summary}",
+                "",
+                f"**Why relevant:** {analysis.reason}",
+                "",
+                f"[Read original article]({article.url})",
+                "",
+                "---",
                 "",
             ]
         )
-
-    if not articles:
-        lines.append("No relevant articles found.")
 
     return "\n".join(lines)
