@@ -69,7 +69,7 @@ docker compose version
 Клонируйте репозиторий:
 
 ```powershell
-git clone <URL_РЕПОЗИТОРИЯ>
+git clone (https://github.com/AshAgain/it-security-digest.git)
 ```
 
 Перейдите в директорию проекта:
