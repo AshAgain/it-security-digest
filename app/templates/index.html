@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>IT / Information Security Digest</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        color: #1f2937;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    h1 {
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        margin-top: 0;
+        margin-bottom: 30px;
+        color: #6b7280;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .card h2 {
+        margin-top: 0;
+        margin-bottom: 18px;
+    }
+
+    .credentials-input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(
+            auto-fit,
+            minmax(220px, 1fr)
+        );
+        gap: 10px;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .checkbox-label:hover {
+        background: #f9fafb;
+    }
+
+    .generate-button {
+        width: 100%;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .generate-button:hover {
+        background: #1d4ed8;
+    }
+
+    .generate-button:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+    }
+
+    /* Progress */
+
+    .progress-container {
+        margin-top: 24px;
+    }
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .progress-track {
+        width: 100%;
+        height: 12px;
+        background: #e5e7eb;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        width: 0%;
+        height: 100%;
+        background: #2563eb;
+        border-radius: 6px;
+        transition: width 0.4s ease;
+    }
+
+    .progress-details {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    /* Statistics */
+
+    .statistics {
+        display: grid;
+        grid-template-columns: repeat(
+            auto-fit,
+            minmax(160px, 1fr)
+        );
+        gap: 12px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        background: #f9fafb;
+    }
+
+    .stat-label {
+        display: block;
+        font-size: 13px;
+        color: #6b7280;
+        margin-bottom: 6px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    /* Topics */
+
+    .topic-section {
+        margin-top: 32px;
+    }
+
+    .topic-title {
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .topic-count {
+        color: #6b7280;
+        font-size: 14px;
+        font-weight: normal;
+    }
+
+    /* Articles */
+
+    .article-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 14px;
+        background: #ffffff;
+    }
+
+    .article-card:hover {
+        border-color: #cbd5e1;
+    }
+
+    .article-title {
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        line-height: 1.4;
+    }
+
+    .article-title a {
+        color: #111827;
+        text-decoration: none;
+    }
+
+    .article-title a:hover {
+        color: #2563eb;
+    }
+
+    .article-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        background: #eef2ff;
+        color: #3730a3;
+    }
+
+    .badge-source {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .badge-high {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-medium {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-low {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .article-section {
+        margin-top: 12px;
+    }
+
+    .article-section-title {
+        margin-bottom: 5px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #374151;
+    }
+
+    .article-section-text {
+        margin: 0;
+        line-height: 1.55;
+        color: #4b5563;
+    }
+
+    /* Download */
+
+    .download-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .download-links a {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        text-decoration: none;
+    }
+
+    .download-links a:hover {
+        background: #1d4ed8;
+    }
+
+    /* Error */
+
+    .error {
+        padding: 15px;
+        border-radius: 8px;
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .hint {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    .empty-preview {
+        color: #6b7280;
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>IT / Information Security Digest</h1>
+
+<p class="subtitle">
+    AI-ассистент для формирования персонального
+    дайджеста IT и информационной безопасности
+</p>
+
+
+<!-- GigaChat -->
+
+<div class="card">
+
+    <h2>GigaChat</h2>
+
+    <input
+        id="credentials"
+        class="credentials-input"
+        type="password"
+        placeholder="Введите GigaChat credentials"
+    >
+
+    <p class="hint">
+        Ключ используется только для текущего формирования
+        дайджеста и не сохраняется в базе данных.
+    </p>
+
+</div>
+
+
+<!-- Interests -->
+
+<div class="card">
+
+    <h2>Интересы</h2>
+
+    <div class="checkbox-group">
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                name="interest"
+                value="Python"
+                checked
+            >
+            Python
+        </label>
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                name="interest"
+                value="Linux"
+                checked
+            >
+            Linux
+        </label>
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                name="interest"
+                value="кибербезопасность"
+                checked
+            >
+            Кибербезопасность
+        </label>
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                name="interest"
+                value="уязвимости"
+                checked
+            >
+            Уязвимости
+        </label>
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                name="interest"
+                value="AI"
+                checked
+            >
+            AI
+        </label>
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                name="interest"
+                value="LLM"
+                checked
+            >
+            LLM
+        </label>
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                name="interest"
+                value="Docker"
+                checked
+            >
+            Docker
+        </label>
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                name="interest"
+                value="DevSecOps"
+                checked
+            >
+            DevSecOps
+        </label>
+
+    </div>
+
+</div>
+
+
+<!-- Sources -->
+
+<div class="card">
+
+    <h2>Источники</h2>
+
+    <div class="checkbox-group">
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                name="source"
+                value="BleepingComputer"
+                checked
+            >
+            BleepingComputer
+        </label>
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                name="source"
+                value="Schneier on Security"
+                checked
+            >
+            Schneier on Security
+        </label>
+
+        <label class="checkbox-label">
+            <input
+                type="checkbox"
+                name="source"
+                value="Microsoft Security Response Center"
+                checked
+            >
+            Microsoft Security Response Center
+        </label>
+
+    </div>
+
+</div>
+
+
+<!-- Generate -->
+
+<div class="card">
+
+    <button
+        id="generateButton"
+        class="generate-button"
+    >
+        Сформировать дайджест
+    </button>
+
+
+    <!-- Progress -->
+
+    <div
+        id="progressContainer"
+        class="progress-container"
+        style="display: none;"
+    >
+
+        <div class="progress-header">
+
+            <span id="progressMessage">
+                Подготовка...
+            </span>
+
+            <span id="progressPercent">
+                0%
+            </span>
+
+        </div>
+
+
+        <div class="progress-track">
+
+            <div
+                id="progressBar"
+                class="progress-bar"
+            ></div>
+
+        </div>
+
+
+        <div
+            id="progressDetails"
+            class="progress-details"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<!-- Result -->
+
+<div
+    id="result"
+    class="card"
+>
+</div>
+
+</div>
+
+<script>
+
+    const generateButton =
+        document.getElementById(
+            "generateButton"
+        );
+
+
+    /*
+     * Escape HTML.
+     *
+     * Text from GigaChat and article sources should
+     * not be inserted into the page as raw HTML.
+     */
+
+    function escapeHtml(value) {
+
+        if (value === null ||
+            value === undefined) {
+
+            return "";
+
+        }
+
+        return String(value)
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /*
+     * Update progress bar
+     */
+
+    function updateProgress(data) {
+
+        const progressContainer =
+            document.getElementById(
+                "progressContainer"
+            );
+
+        const progressBar =
+            document.getElementById(
+                "progressBar"
+            );
+
+        const progressPercent =
+            document.getElementById(
+                "progressPercent"
+            );
+
+        const progressMessage =
+            document.getElementById(
+                "progressMessage"
+            );
+
+        const progressDetails =
+            document.getElementById(
+                "progressDetails"
+            );
+
+
+        progressContainer.style.display =
+            "block";
+
+
+        const percent = Math.max(
+            0,
+            Math.min(
+                100,
+                data.percent || 0
+            )
+        );
+
+
+        progressBar.style.width =
+            `${percent}%`;
+
+
+        progressPercent.textContent =
+            `${percent}%`;
+
+
+        progressMessage.textContent =
+            data.message ||
+            "Обработка...";
+
+
+        if (data.total > 0) {
+
+            progressDetails.textContent =
+                `${data.current} из ${data.total} статей`;
+
+        } else {
+
+            progressDetails.textContent =
+                "";
+
+        }
+
+    }
+
+
+    /*
+     * Wait until background task finishes
+     */
+
+    async function waitForDigest(
+        taskId
+    ) {
+
+        while (true) {
+
+            const response =
+                await fetch(
+                    `/api/digest/status/${taskId}`
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Не удалось получить статус задачи."
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            updateProgress(data);
+
+
+            if (
+                data.status ===
+                "completed"
+            ) {
+
+                return data.result;
+
+            }
+
+
+            if (
+                data.status ===
+                "failed"
+            ) {
+
+                throw new Error(
+                    data.error ||
+                    "Ошибка формирования дайджеста."
+                );
+
+            }
+
+
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        1000
+                    )
+            );
+
+        }
+
+    }
+
+
+    /*
+     * Convert importance value into Russian label.
+     */
+
+    function getImportanceLabel(
+        importance
+    ) {
+
+        const labels = {
+
+            high: "Высокая",
+
+            medium: "Средняя",
+
+            low: "Низкая"
+
+        };
+
+
+        return (
+            labels[importance] ||
+            importance ||
+            "Не указана"
+        );
+
+    }
+
+
+    /*
+     * Build article HTML.
+     */
+
+    function renderArticle(
+        article
+    ) {
+
+        const importance =
+            article.importance ||
+            "low";
+
+
+        return `
+
+            <article class="article-card">
+
+                <h3 class="article-title">
+
+                    <a
+                        href="${escapeHtml(article.url)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        ${escapeHtml(article.title)}
+                    </a>
+
+                </h3>
+
+
+                <div class="article-meta">
+
+                    <span class="badge badge-source">
+                        ${escapeHtml(article.source)}
+                    </span>
+
+                    <span class="badge">
+                        ${escapeHtml(article.published_at)}
+                    </span>
+
+                    <span class="badge">
+                        ${escapeHtml(article.topic)}
+                    </span>
+
+                    <span class="badge badge-${escapeHtml(importance)}">
+                        Важность:
+                        ${escapeHtml(
+                            getImportanceLabel(
+                                importance
+                            )
+                        )}
+                    </span>
+
+                </div>
+
+
+                <div class="article-section">
+
+                    <div class="article-section-title">
+                        Краткое содержание
+                    </div>
+
+                    <p class="article-section-text">
+                        ${escapeHtml(article.summary)}
+                    </p>
+
+                </div>
+
+
+                <div class="article-section">
+
+                    <div class="article-section-title">
+                        Почему релевантно
+                    </div>
+
+                    <p class="article-section-text">
+                        ${escapeHtml(article.reason)}
+                    </p>
+
+                </div>
+
+            </article>
+
+        `;
+
+    }
+
+
+    /*
+     * Build full digest preview.
+     */
+
+    function renderPreview(
+        result
+    ) {
+
+        const articles =
+            result.preview || [];
+
+
+        if (articles.length === 0) {
+
+            return `
+
+                <div class="result-card">
+
+                    <h2>
+                        Дайджест готов
+                    </h2>
+
+                    <p class="empty-preview">
+                        Релевантных публикаций
+                        не найдено.
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+
+        /*
+         * Group articles by topic.
+         */
+
+        const grouped = {};
+
+
+        for (
+            const article of articles
+        ) {
+
+            const topic =
+                article.topic ||
+                "Other";
+
+
+            if (!grouped[topic]) {
+
+                grouped[topic] = [];
+
+            }
+
+
+            grouped[topic].push(
+                article
+            );
+
+        }
+
+
+        let topicsHtml = "";
+
+
+        for (
+            const [topic, topicArticles]
+            of Object.entries(grouped)
+        ) {
+
+            topicsHtml += `
+
+                <section class="topic-section">
+
+                    <h2 class="topic-title">
+
+                        ${escapeHtml(topic)}
+
+                        <span class="topic-count">
+                            (${topicArticles.length})
+                        </span>
+
+                    </h2>
+
+                    ${topicArticles
+                        .map(renderArticle)
+                        .join("")}
+
+                </section>
+
+            `;
+
+        }
+
+
+        return `
+
+            <div>
+
+                <h2>
+                    Предпросмотр дайджеста
+                </h2>
+
+
+                <div class="statistics">
+
+                    <div class="stat-card">
+
+                        <span class="stat-label">
+                            Статей обработано
+                        </span>
+
+                        <span class="stat-value">
+                            ${result.total_articles}
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <span class="stat-label">
+                            Проанализировано
+                        </span>
+
+                        <span class="stat-value">
+                            ${result.analyzed}
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <span class="stat-label">
+                            Релевантных
+                        </span>
+
+                        <span class="stat-value">
+                            ${result.relevant}
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <span class="stat-label">
+                            Нерелевантных
+                        </span>
+
+                        <span class="stat-value">
+                            ${result.not_relevant}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                ${topicsHtml}
+
+
+                <div class="download-links">
+
+                    <a
+                        href="${escapeHtml(result.markdown)}"
+                        target="_blank"
+                    >
+                        Скачать Markdown
+                    </a>
+
+
+                    <a
+                        href="${escapeHtml(result.docx)}"
+                    >
+                        Скачать DOCX
+                    </a>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /*
+     * Generate digest
+     */
+
+    generateButton.addEventListener(
+        "click",
+        async () => {
+
+            const credentials =
+                document
+                    .getElementById(
+                        "credentials"
+                    )
+                    .value
+                    .trim();
+
+
+            const interests =
+                Array.from(
+                    document.querySelectorAll(
+                        'input[name="interest"]:checked'
+                    )
+                ).map(
+                    checkbox =>
+                        checkbox.value
+                );
+
+
+            const sources =
+                Array.from(
+                    document.querySelectorAll(
+                        'input[name="source"]:checked'
+                    )
+                ).map(
+                    checkbox =>
+                        checkbox.value
+                );
+
+
+            /*
+             * Validation
+             */
+
+            if (!credentials) {
+
+                alert(
+                    "Введите GigaChat credentials."
+                );
+
+                return;
+
+            }
+
+
+            if (interests.length === 0) {
+
+                alert(
+                    "Выберите хотя бы один интерес."
+                );
+
+                return;
+
+            }
+
+
+            if (sources.length === 0) {
+
+                alert(
+                    "Выберите хотя бы один источник."
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * Disable button
+             */
+
+            generateButton.disabled =
+                true;
+
+
+            generateButton.textContent =
+                "Формирование...";
+
+
+            const resultContainer =
+                document.getElementById(
+                    "result"
+                );
+
+
+            resultContainer.innerHTML =
+                "";
+
+
+            /*
+             * Initial progress
+             */
+
+            updateProgress({
+
+                percent: 0,
+
+                message:
+                    "Запускаем формирование дайджеста...",
+
+                current: 0,
+
+                total: 0
+
+            });
+
+
+            try {
+
+                /*
+                 * Start background task
+                 */
+
+                const response =
+                    await fetch(
+                        "/api/digest",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    credentials:
+                                        credentials,
+
+                                    interests:
+                                        interests,
+
+                                    sources:
+                                        sources
+
+                                })
+
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    let errorMessage =
+                        "Не удалось запустить формирование дайджеста.";
+
+                    try {
+
+                        const errorData =
+                            await response.json();
+
+                        if (
+                            errorData.detail
+                        ) {
+
+                            errorMessage =
+                                errorData.detail;
+
+                        }
+
+                    } catch (_) {
+                        // Ignore JSON parsing error.
+                    }
+
+
+                    throw new Error(
+                        errorMessage
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                /*
+                 * Wait for background task
+                 */
+
+                const result =
+                    await waitForDigest(
+                        data.task_id
+                    );
+
+
+                /*
+                 * Show preview
+                 */
+
+                resultContainer.innerHTML =
+                    renderPreview(result);
+
+
+            } catch (error) {
+
+                resultContainer.innerHTML = `
+
+                    <div class="error">
+
+                        ${escapeHtml(
+                            error.message
+                        )}
+
+                    </div>
+
+                `;
+
+            } finally {
+
+                generateButton.disabled =
+                    false;
+
+                generateButton.textContent =
+                    "Сформировать дайджест";
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

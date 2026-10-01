@@ -11,14 +11,16 @@ from app.services.gigachat import GigaChatClient
 
 
 class ArticleAnalyzer:
-    def __init__(self) -> None:
-        self.client = GigaChatClient()
+    def __init__(self, credentials: str | None = None) -> None:
+        self.client = GigaChatClient(credentials)
 
     async def analyze(
         self,
         session: AsyncSession,
         article: Article,
         interests: list[str],
+        *,
+        force_reanalysis: bool = False,
     ) -> ArticleAnalysis:
         existing_result = await session.execute(
             select(ArticleAnalysisModel).where(
@@ -28,7 +30,7 @@ class ArticleAnalyzer:
 
         existing_analysis = existing_result.scalar_one_or_none()
 
-        if existing_analysis is not None:
+        if existing_analysis is not None and not force_reanalysis:
             return ArticleAnalysis(
                 relevant=existing_analysis.relevant,
                 topic=existing_analysis.topic,
@@ -41,7 +43,7 @@ class ArticleAnalyzer:
         topics_text = ", ".join(TOPICS)
 
         prompt = f"""
-Проанализируй публикацию с точки зрения интересов пользователя.
+Проанализируй публикацию из области IT и информационной безопасности.
 
 Интересы пользователя:
 {interests_text}
@@ -49,15 +51,15 @@ class ArticleAnalyzer:
 Допустимые темы:
 {topics_text}
 
-Публикация:
+Информация о публикации:
 
 Название:
 {article.title}
 
 Источник:
-{article.source.name}
+{article.source.name if article.source else "Unknown"}
 
-Дата:
+Дата публикации:
 {article.published_at}
 
 Описание:
@@ -66,65 +68,48 @@ class ArticleAnalyzer:
 URL:
 {article.url}
 
-Требуется определить:
+Определи:
 
-1. relevant
+1. relevant — представляет ли публикация интерес для пользователя с учетом его интересов.
+2. topic — выбери одну тему из списка допустимых тем.
+3. importance — важность публикации: high, medium или low.
+4. summary — краткое описание содержания публикации на русском языке.
+5. reason — кратко объясни, почему публикация релевантна или нерелевантна интересам пользователя.
 
-Определи, связана ли публикация с интересами пользователя.
-
-2. topic
-
-Выбери РОВНО ОДНУ тему из списка:
-
-{topics_text}
-
-Не создавай новые темы.
-
-3. importance
-
-Определи практическую значимость публикации:
-
-- high — критически важная информация, например активно эксплуатируемая
-  уязвимость, серьёзная угроза, критическое обновление безопасности
-  или событие, которое специалисту важно узнать как можно скорее.
-- medium — заметная и полезная информация для специалиста,
-  но не требующая срочной реакции.
-- low — второстепенная или преимущественно информационная публикация.
-
-4. summary
-
-Сделай краткое содержание публикации в 1-3 предложениях.
-
-5. reason
-
-Объясни, почему публикация релевантна или нерелевантна
-интересам пользователя.
-
-Верни ТОЛЬКО JSON следующего вида:
+Верни результат строго в JSON следующего формата:
 
 {{
     "relevant": true,
-    "topic": "DevSecOps",
-    "importance": "medium",
+    "topic": "Vulnerabilities",
+    "importance": "high",
     "summary": "Краткое содержание публикации.",
-    "reason": "Причина релевантности публикации."
+    "reason": "Публикация связана с интересами пользователя."
 }}
+
+Не добавляй Markdown, комментарии или дополнительный текст.
 """
 
         response = await self.client.chat(prompt)
 
         analysis = ArticleAnalysis.model_validate_json(response)
 
-        analysis_record = ArticleAnalysisModel(
-            article_id=article.id,
-            relevant=analysis.relevant,
-            topic=analysis.topic,
-            importance=analysis.importance,
-            summary=analysis.summary,
-            reason=analysis.reason,
-        )
+        if existing_analysis is not None:
+            existing_analysis.relevant = analysis.relevant
+            existing_analysis.topic = analysis.topic
+            existing_analysis.importance = analysis.importance
+            existing_analysis.summary = analysis.summary
+            existing_analysis.reason = analysis.reason
+        else:
+            analysis_record = ArticleAnalysisModel(
+                article_id=article.id,
+                relevant=analysis.relevant,
+                topic=analysis.topic,
+                importance=analysis.importance,
+                summary=analysis.summary,
+                reason=analysis.reason,
+            )
 
-        session.add(analysis_record)
+            session.add(analysis_record)
 
         await session.commit()
 

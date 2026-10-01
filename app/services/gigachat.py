@@ -7,10 +7,15 @@ from app.config.settings import get_settings
 
 
 class GigaChatClient:
-    def __init__(self) -> None:
+    def __init__(self, credentials: str | None = None) -> None:
         settings = get_settings()
 
-        self.credentials = settings.gigachat_credentials
+        self.credentials = (
+            credentials
+            if credentials is not None
+            else settings.gigachat_credentials
+        )
+
         self.model = settings.gigachat_model
 
     async def chat(self, prompt: str) -> str:
