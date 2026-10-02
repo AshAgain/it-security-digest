@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     postgres_host: str = "localhost"
     postgres_port: int = 5432
 
+    openai_base_url: str
+    openai_api_key: str
+    openai_model: str
+    
     gigachat_credentials: str
     gigachat_model: str = "GigaChat-3-Ultra"
 

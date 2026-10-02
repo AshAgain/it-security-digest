@@ -81,6 +81,249 @@
         background: #f9fafb;
     }
 
+    .source-toolbar {
+        display: grid;
+        grid-template-columns: minmax(180px, 1fr) minmax(260px, 2fr) auto;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .source-input {
+        width: 100%;
+        min-width: 0;
+        padding: 11px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .source-add-button {
+        border: 0;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .source-add-button {
+        padding: 0 16px;
+        background: #0f766e;
+        color: white;
+    }
+
+    .source-add-button:hover {
+        background: #115e59;
+    }
+
+    .source-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .source-details {
+        min-width: 0;
+    }
+
+    .source-url {
+        display: block;
+        margin-top: 4px;
+        overflow: hidden;
+        color: #6b7280;
+        font-size: 12px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .source-status {
+        min-height: 20px;
+        margin: 8px 0 0;
+        color: #0f766e;
+        font-size: 13px;
+    }
+
+    .source-status.error {
+        color: #be123c;
+    }
+
+    .selected-sources {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+    }
+
+    .selected-source {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 10px 7px 11px;
+        border: 0;
+        border-radius: 999px;
+        background: #ccfbf1;
+        color: #115e59;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .selected-source:hover {
+        background: #99f6e4;
+    }
+
+    .selected-source-remove {
+        font-size: 16px;
+        line-height: 1;
+    }
+
+    .selected-sources-empty {
+        margin: 0 0 10px;
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .source-dropdown-menu {
+        margin-top: 8px;
+        padding: 12px;
+        border: 1px solid #dbe3ef;
+        border-radius: 10px;
+        background: #ffffff;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+    }
+
+    .source-management-button {
+        padding: 10px 14px;
+        border: 0;
+        border-radius: 8px;
+        background: #0f766e;
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .source-management-button:hover {
+        background: #115e59;
+    }
+
+    .source-modal[hidden] {
+        display: none;
+    }
+
+    .source-modal {
+        position: fixed;
+        z-index: 10;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+        background: rgba(15, 23, 42, 0.45);
+    }
+
+    .source-modal-content {
+        width: min(620px, 100%);
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 24px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+    }
+
+    .source-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .source-modal-header h3 {
+        margin: 0;
+    }
+
+    .source-modal-close {
+        width: 36px;
+        height: 36px;
+        border: 0;
+        border-radius: 8px;
+        background: #f1f5f9;
+        color: #334155;
+        cursor: pointer;
+        font-size: 22px;
+        line-height: 1;
+    }
+
+    .source-management-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 16px;
+    }
+
+    .source-picker-row {
+        display: flex;
+        gap: 8px;
+    }
+
+    .source-picker {
+        flex: 1;
+        min-width: 0;
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: white;
+        color: #1f2937;
+        font-size: 14px;
+    }
+
+    .source-action-button {
+        padding: 0 14px;
+        border: 0;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .source-add-selected-button {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .source-add-selected-button:hover {
+        background: #bfdbfe;
+    }
+
+    .source-remove-button {
+        background: #fff1f2;
+        color: #be123c;
+    }
+
+    .source-remove-button:hover {
+        background: #ffe4e6;
+    }
+
+    .source-delete-button {
+        padding: 8px 10px;
+        border: 0;
+        border-radius: 8px;
+        background: #fff1f2;
+        color: #be123c;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .source-delete-button:hover {
+        background: #ffe4e6;
+    }
+
+    @media (max-width: 700px) {
+        .source-toolbar {
+            grid-template-columns: 1fr;
+        }
+
+        .source-add-button {
+            min-height: 42px;
+        }
+    }
+
     .generate-button {
         width: 100%;
         padding: 14px 20px;
@@ -446,38 +689,47 @@
 
     <h2>Источники</h2>
 
-    <div class="checkbox-group">
+    <button id="openSourceManagement" class="source-management-button" type="button">
+        Управление источниками
+    </button>
 
-        <label class="checkbox-label">
-            <input
-                type="checkbox"
-                name="source"
-                value="BleepingComputer"
-                checked
-            >
-            BleepingComputer
-        </label>
+    <p id="sourceStatus" class="source-status" aria-live="polite"></p>
 
-        <label class="checkbox-label">
-            <input
-                type="checkbox"
-                name="source"
-                value="Schneier on Security"
-                checked
-            >
-            Schneier on Security
-        </label>
+    <div id="sourceList">
+        <p class="hint">Загрузка источников...</p>
 
-        <label class="checkbox-label">
-            <input
-                type="checkbox"
-                name="source"
-                value="Microsoft Security Response Center"
-                checked
-            >
-            Microsoft Security Response Center
-        </label>
+    </div>
 
+    <div id="sourceManagementModal" class="source-modal" hidden>
+        <div class="source-modal-content" role="dialog" aria-modal="true" aria-labelledby="sourceManagementTitle">
+            <div class="source-modal-header">
+                <h3 id="sourceManagementTitle">Управление источниками</h3>
+                <button id="closeSourceManagement" class="source-modal-close" type="button" aria-label="Закрыть">×</button>
+            </div>
+
+            <form id="sourceForm" class="source-toolbar">
+                <input
+                    id="sourceName"
+                    class="source-input"
+                    type="text"
+                    maxlength="255"
+                    placeholder="Название источника"
+                    required
+                >
+                <input
+                    id="sourceUrl"
+                    class="source-input"
+                    type="url"
+                    placeholder="https://example.com/feed.xml"
+                    required
+                >
+                <button class="source-add-button" type="submit">
+                    Добавить источник
+                </button>
+            </form>
+
+            <div id="sourceManagementList" class="source-management-list"></div>
+        </div>
     </div>
 
 </div>
@@ -547,6 +799,241 @@
 </div>
 
 <script>
+
+    const sourceForm = document.getElementById("sourceForm");
+    const sourceList = document.getElementById("sourceList");
+    const sourceStatus = document.getElementById("sourceStatus");
+    const sourceManagementList = document.getElementById("sourceManagementList");
+    const sourceManagementModal = document.getElementById("sourceManagementModal");
+    let selectedSourceNames = new Set();
+
+
+    function setSourceStatus(message, isError = false) {
+        sourceStatus.textContent = message;
+        sourceStatus.classList.toggle("error", isError);
+    }
+
+
+    function renderSources(sources) {
+        const availableNames = new Set(sources.map(source => source.name));
+        selectedSourceNames = new Set(
+            [...selectedSourceNames].filter(name => availableNames.has(name))
+        );
+
+        if (sources.length === 0) {
+            sourceList.innerHTML =
+                '<p class="hint">Источников пока нет. Добавьте первый RSS-источник.</p>';
+            renderManagementSources(sources);
+            return;
+        }
+
+        const availableSources = sources.filter(
+            source => !selectedSourceNames.has(source.name)
+        );
+
+        sourceList.innerHTML = `
+            <div class="source-dropdown-menu">
+                <div class="source-picker-row">
+                    <select id="sourcePicker" class="source-picker" aria-label="Источник">
+                        <option value="">Выберите источник</option>
+                        ${availableSources.map(source => `
+                            <option value="${escapeHtml(source.name)}">
+                                ${escapeHtml(source.name)}
+                            </option>
+                        `).join("")}
+                    </select>
+                    <button
+                        id="addSelectedSource"
+                        class="source-action-button source-add-selected-button"
+                        type="button"
+                        ${availableSources.length === 0 ? "disabled" : ""}
+                    >
+                        Добавить
+                    </button>
+                </div>
+            </div>
+            <div id="selectedSources" class="selected-sources" aria-live="polite"></div>
+        `;
+
+        updateSelectedSources();
+        renderManagementSources(sources);
+    }
+
+
+    function renderManagementSources(sources) {
+        if (sources.length === 0) {
+            sourceManagementList.innerHTML =
+                '<p class="hint">Источников пока нет.</p>';
+            return;
+        }
+
+        sourceManagementList.innerHTML = sources.map(source => `
+            <div class="checkbox-label source-row">
+                <span class="source-details">
+                    ${escapeHtml(source.name)}
+                    <span class="source-url">${escapeHtml(source.url)}</span>
+                </span>
+                <button
+                    class="source-delete-button"
+                    type="button"
+                    data-source-id="${source.id}"
+                    data-source-name="${escapeHtml(source.name)}"
+                >
+                    Удалить
+                </button>
+            </div>
+        `).join("");
+    }
+
+
+    function updateSelectedSources() {
+        const selectedSources = document.getElementById("selectedSources");
+
+        if (!selectedSources) {
+            return;
+        }
+
+        if (selectedSourceNames.size === 0) {
+            selectedSources.innerHTML =
+                '<p class="selected-sources-empty">Источники не выбраны.</p>';
+        } else {
+            selectedSources.innerHTML = [...selectedSourceNames].map(name => `
+                <button
+                    class="selected-source"
+                    type="button"
+                    data-source-name="${escapeHtml(name)}"
+                    title="Убрать источник из выбора"
+                >
+                    <span>${escapeHtml(name)}</span>
+                    <span class="selected-source-remove" aria-hidden="true">×</span>
+                </button>
+            `).join("");
+        }
+
+    }
+
+
+    async function loadSources() {
+        try {
+            const response = await fetch("/api/sources");
+            if (!response.ok) {
+                throw new Error("Не удалось загрузить источники.");
+            }
+            renderSources(await response.json());
+        } catch (error) {
+            sourceList.innerHTML = "";
+            setSourceStatus(error.message, true);
+        }
+    }
+
+
+    sourceForm.addEventListener("submit", async event => {
+        event.preventDefault();
+        const nameInput = document.getElementById("sourceName");
+        const urlInput = document.getElementById("sourceUrl");
+        const addButton = sourceForm.querySelector("button");
+
+        addButton.disabled = true;
+        setSourceStatus("");
+
+        try {
+            const response = await fetch("/api/sources", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: nameInput.value.trim(),
+                    url: urlInput.value.trim(),
+                    source_type: "rss"
+                })
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail || "Не удалось добавить источник.");
+            }
+
+            nameInput.value = "";
+            urlInput.value = "";
+            setSourceStatus("Источник добавлен.");
+            await loadSources();
+        } catch (error) {
+            setSourceStatus(error.message, true);
+        } finally {
+            addButton.disabled = false;
+        }
+    });
+
+
+    sourceList.addEventListener("click", async event => {
+        const selectedButton = event.target.closest(".selected-source");
+        if (selectedButton) {
+            selectedSourceNames.delete(selectedButton.dataset.sourceName);
+            await loadSources();
+            return;
+        }
+
+        if (event.target.closest("#addSelectedSource")) {
+            const picker = document.getElementById("sourcePicker");
+            if (picker.value) {
+                selectedSourceNames.add(picker.value);
+                await loadSources();
+            }
+            return;
+        }
+
+    });
+
+
+    sourceManagementList.addEventListener("click", async event => {
+        const deleteButton = event.target.closest(".source-delete-button");
+        if (!deleteButton) {
+            return;
+        }
+
+        const sourceName = deleteButton.dataset.sourceName;
+        if (!window.confirm(`Удалить источник «${sourceName}» из базы?`)) {
+            return;
+        }
+
+        deleteButton.disabled = true;
+        try {
+            const response = await fetch(
+                `/api/sources/${deleteButton.dataset.sourceId}`,
+                { method: "DELETE" }
+            );
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.detail || "Не удалось удалить источник.");
+            }
+
+            selectedSourceNames.delete(sourceName);
+            setSourceStatus("Источник удалён из базы.");
+            await loadSources();
+        } catch (error) {
+            deleteButton.disabled = false;
+            setSourceStatus(error.message, true);
+        }
+    });
+
+
+    document.getElementById("openSourceManagement").addEventListener(
+        "click",
+        () => { sourceManagementModal.hidden = false; }
+    );
+
+    document.getElementById("closeSourceManagement").addEventListener(
+        "click",
+        () => { sourceManagementModal.hidden = true; }
+    );
+
+    sourceManagementModal.addEventListener("click", event => {
+        if (event.target === sourceManagementModal) {
+            sourceManagementModal.hidden = true;
+        }
+    });
+
+
+    loadSources();
 
     const generateButton =
         document.getElementById(
@@ -1071,14 +1558,7 @@
 
 
             const sources =
-                Array.from(
-                    document.querySelectorAll(
-                        'input[name="source"]:checked'
-                    )
-                ).map(
-                    checkbox =>
-                        checkbox.value
-                );
+                [...selectedSourceNames];
 
 
             /*

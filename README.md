@@ -49,164 +49,64 @@ AI-сервис для автоматического создания перс�
 Перед установкой необходимо установить:
 
 1. Git
-2. Python 3.12 или новее
+2. uv
 3. Docker Desktop
 4. Доступ к GigaChat API
 
 Проверить установленные версии можно командами:
 
 ```powershell
-python --version
+uv --version
 git --version
 docker --version
 docker compose version
 ```
 
-## Установка
-
 ### 1. Скачать проект
 
-Клонируйте репозиторий:
-
 ```powershell
-git clone (https://github.com/AshAgain/it-security-digest.git)
-```
-
-Перейдите в директорию проекта:
-
-```powershell
+git clone https://github.com/AshAgain/it-security-digest.git
 cd it-security-digest
 ```
 
-Если проект уже был скачан другим способом, достаточно перейти в его директорию:
-
-```powershell
-cd C:\Users\<имя_пользователя>\it-security-digest
-```
-
 ### 2. Создать файл `.env`
-
-В корне проекта находится файл `.env.example`.
-
-Создайте на его основе файл `.env`.
-
-В Windows PowerShell:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-После этого в корне проекта должны находиться:
+Заполните в `.env` параметры GigaChat и проверьте настройки PostgreSQL.
 
-```text
-.env
-.env.example
-```
-
-Файл `.env` используется для локальной конфигурации и не должен добавляться в Git.
-
-### 3. Настроить `.env`
-
-Откройте `.env` и проверьте настройки PostgreSQL:
-
-```env
-APP_NAME=IT Security Digest API
-APP_VERSION=0.1.0
-DEBUG=true
-
-POSTGRES_DB=it_security_digest
-POSTGRES_USER=digest_user
-POSTGRES_PASSWORD=change_me
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-```
-
-Пароль `POSTGRES_PASSWORD` можно изменить на любой удобный пароль.
-
-GigaChat credentials можно использовать непосредственно через веб-интерфейс при формировании дайджеста.
-
-### 4. Запустить PostgreSQL
-
-Запустите PostgreSQL через Docker Compose:
+### 3. Запустить приложение в Docker
 
 ```powershell
-docker compose up -d
+docker compose up --build -d
 ```
 
-Проверьте состояние контейнера:
+Compose запускает PostgreSQL, затем одноразовый контейнер миграций и после успешного `alembic upgrade head` контейнер приложения.
+
+Проверить состояние:
 
 ```powershell
 docker compose ps
+docker compose logs -f app migrate
 ```
 
-PostgreSQL должен иметь состояние `Up` и пройти healthcheck.
+Приложение доступно по адресу `http://127.0.0.1:8000`.
 
-При необходимости посмотреть логи:
+### 4. Локальная разработка через uv
 
 ```powershell
-docker compose logs postgres
+uv sync --extra dev
+uv run pytest
+uv run uvicorn app.main:app --reload
 ```
 
-### 5. Создать виртуальное окружение Python
-
-Если виртуальное окружение ещё не создано:
+Если PostgreSQL запущен через Compose, локальные миграции выполняются так:
 
 ```powershell
-python -m venv .venv
+uv run alembic upgrade head
 ```
-
-Активируйте его:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-После активации в терминале должно появиться:
-
-```text
-(.venv)
-```
-
-### 6. Установить зависимости
-
-Установите проект и его зависимости:
-
-```powershell
-python -m pip install --upgrade pip
-pip install -e .
-```
-
-Для установки также зависимостей для разработки и тестирования:
-
-```powershell
-pip install -e ".[dev]"
-```
-
-### 7. Выполнить миграции базы данных
-
-После запуска PostgreSQL выполните:
-
-```powershell
-alembic upgrade head
-```
-
-Команда создаст необходимые таблицы в базе данных.
-
-### 8. Запустить приложение
-
-Запустите FastAPI:
-
-```powershell
-uvicorn app.main:app --reload
-```
-
-После запуска приложение будет доступно по адресу:
-
-```text
-http://127.0.0.1:8000
-```
-
-Откройте этот адрес в браузере.
 
 ## Использование
 
@@ -281,11 +181,16 @@ Authorization key
 
 ### 3. Выбрать источники
 
-Сервис поддерживает следующие источники:
+Источники выбираются по одному через выпадающий список:
 
-* BleepingComputer
-* Schneier on Security
-* Microsoft Security Response Center
+1. Выберите источник в списке и нажмите `Добавить`.
+2. Выбранный источник появится в панели под списком.
+3. Чтобы отменить выбор, нажмите `×` на источнике в панели.
+4. После отмены источник снова появится в выпадающем списке.
+
+Выбранные источники не отображаются в списке доступных источников.
+
+Для добавления нового RSS-источника или удаления источника из базы нажмите `Управление источниками`. Эти действия выполняются в отдельном модальном окне.
 
 ### 4. Запустить формирование
 
@@ -542,22 +447,16 @@ GET /api/digest/status/{task_id}
 
 ## Остановка проекта
 
-Чтобы остановить FastAPI, нажмите:
-
-```text
-Ctrl + C
-```
-
-Чтобы остановить PostgreSQL:
+Остановить приложение, миграции и PostgreSQL:
 
 ```powershell
 docker compose down
 ```
 
-Чтобы снова запустить PostgreSQL:
+Чтобы снова запустить весь стек:
 
 ```powershell
-docker compose up -d
+docker compose up --build -d
 ```
 
 Данные PostgreSQL сохраняются в Docker volume и не удаляются при обычном выполнении `docker compose down`.
@@ -575,7 +474,7 @@ docker compose ps
 Если контейнер остановлен, запустите:
 
 ```powershell
-docker compose up -d
+docker compose up --build -d
 ```
 
 Посмотреть логи:
@@ -606,30 +505,19 @@ POSTGRES_PORT
 
 ### Таблицы базы данных отсутствуют
 
-Выполните:
+Перезапустите стек, чтобы контейнер миграций выполнил миграции автоматически:
 
 ```powershell
-alembic upgrade head
+docker compose up --build -d
 ```
 
-### Приложение не запускается после создания виртуального окружения
+### Приложение не запускается
 
-Убедитесь, что виртуальное окружение активировано:
+Проверьте состояние контейнеров и логи приложения:
 
 ```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-В начале строки терминала должно отображаться:
-
-```text
-(.venv)
-```
-
-Затем повторите:
-
-```powershell
-pip install -e .
+docker compose ps
+docker compose logs app migrate
 ```
 
 ### Не формируется дайджест

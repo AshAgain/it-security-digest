@@ -1,10 +1,11 @@
 import asyncio
 
-from app.services.gigachat import GigaChatClient
+#from app.services.gigachat import GigaChatClient
+from app.services.llm import OpenAIClient
 
 
 async def main() -> None:
-    client = GigaChatClient()
+    client = OpenAIClient()
 
     response = await client.chat(
         "Объясни в 3-4 предложениях, почему организациям "
