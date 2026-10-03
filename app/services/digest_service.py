@@ -37,7 +37,7 @@ async def build_digest(
 ) -> DigestResult:
     if not credentials.strip():
         raise ValueError(
-            "GigaChat credentials are required."
+            "LLM API credentials are required."
         )
 
     if not interests:
@@ -85,7 +85,7 @@ async def build_digest(
             "No recent articles found."
         )
 
-    # 3. Analyze articles with the user's GigaChat credentials.
+    # 3. Analyze articles with the user's OpenAI-compatible API credentials.
     analyzer = ArticleAnalyzer(credentials)
 
     relevant = 0
@@ -218,16 +218,6 @@ async def build_digest(
         total_relevant=relevant,
         total_not_relevant=not_relevant,
     )
-
-    if task_id:
-        update_task(
-            task_id,
-            status="completed",
-            current=len(articles),
-            total=len(articles),
-            percent=100,
-            message="Дайджест готов.",
-        )
 
     return DigestResult(
         total_articles=len(articles),

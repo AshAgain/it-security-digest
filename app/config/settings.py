@@ -18,9 +18,6 @@ class Settings(BaseSettings):
     openai_api_key: str
     openai_model: str
     
-    gigachat_credentials: str
-    gigachat_model: str = "GigaChat-3-Ultra"
-
     @property
     def database_url(self) -> str:
         return (

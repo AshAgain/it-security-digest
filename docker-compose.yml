@@ -40,8 +40,6 @@ services:
       OPENAI_BASE_URL: ${OPENAI_BASE_URL}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENAI_MODEL: ${OPENAI_MODEL}
-      GIGACHAT_CREDENTIALS: ${GIGACHAT_CREDENTIALS}
-      GIGACHAT_MODEL: ${GIGACHAT_MODEL:-GigaChat-3-Ultra}
     depends_on:
       postgres:
         condition: service_healthy
@@ -65,8 +63,6 @@ services:
       OPENAI_BASE_URL: ${OPENAI_BASE_URL}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENAI_MODEL: ${OPENAI_MODEL}
-      GIGACHAT_CREDENTIALS: ${GIGACHAT_CREDENTIALS}
-      GIGACHAT_MODEL: ${GIGACHAT_MODEL:-GigaChat-3-Ultra}
     ports:
       - "${APP_PORT:-8000}:8000"
     volumes:

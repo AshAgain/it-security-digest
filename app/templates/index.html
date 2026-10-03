@@ -569,17 +569,17 @@
 </p>
 
 
-<!-- GigaChat -->
+<!-- LLM provider -->
 
 <div class="card">
 
-    <h2>GigaChat</h2>
+    <h2>LLM API</h2>
 
     <input
         id="credentials"
         class="credentials-input"
         type="password"
-        placeholder="Введите GigaChat credentials"
+        placeholder="Введите API credentials"
     >
 
     <p class="hint">
@@ -1044,7 +1044,7 @@
     /*
      * Escape HTML.
      *
-     * Text from GigaChat and article sources should
+    * Text from the LLM and article sources should
      * not be inserted into the page as raw HTML.
      */
 
@@ -1191,6 +1191,12 @@
                 data.status ===
                 "completed"
             ) {
+
+                if (!data.result) {
+                    throw new Error(
+                        "Сервер завершил задачу без результата."
+                    );
+                }
 
                 return data.result;
 
@@ -1568,7 +1574,7 @@
             if (!credentials) {
 
                 alert(
-                    "Введите GigaChat credentials."
+                    "Введите LLM API credentials."
                 );
 
                 return;

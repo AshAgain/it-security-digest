@@ -100,6 +100,11 @@ async def _run_digest_task(
 
         update_task(
             task_id,
+            status="completed",
+            current=result.total_articles,
+            total=result.total_articles,
+            percent=100,
+            message="Дайджест готов.",
             result={
                 "total_articles": result.total_articles,
                 "analyzed": result.analyzed,

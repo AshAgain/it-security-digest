@@ -13,30 +13,23 @@ class OpenAIClient:
         self.api_key = api_key if api_key is not None else settings.openai_api_key
         self.model = settings.openai_model
 
-
     async def chat(self, prompt: str) -> str:
-        import httpx
-        async with httpx.AsyncClient(verify=False) as http_client:
-            async with AsyncOpenAI(
-                api_key=self.api_key, 
-                base_url=self.base_url,
-                http_client=http_client
-            ) as client:
-                response = await client.chat.completions.create(
-                    model=self.model,
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": (
-                                "Ты помощник для анализа публикаций "
-                                "в области IT и информационной безопасности."
-                            )
-                        },
-                        {
-                            "role": "user",
-                            "content": prompt
-                        }
-                    ]
-                )
-                
-        return response.choices[0].message.content
+        async with AsyncOpenAI(
+            api_key=self.api_key,
+            base_url=self.base_url,
+        ) as client:
+            response = await client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": (
+                            "Ты помощник для анализа публикаций "
+                            "в области IT и информационной безопасности."
+                        ),
+                    },
+                    {"role": "user", "content": prompt},
+                ],
+            )
+
+        return response.choices[0].message.content or ""

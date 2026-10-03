@@ -1,6 +1,5 @@
 import asyncio
 
-#from app.services.gigachat import GigaChatClient
 from app.services.llm import OpenAIClient
 
 
@@ -13,7 +12,7 @@ async def main() -> None:
     )
 
     print()
-    print("GigaChat response:")
+    print("OpenAI-compatible model response:")
     print(response)
     print()
 
