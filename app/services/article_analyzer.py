@@ -7,12 +7,12 @@ from app.models.article import Article
 from app.models.article_analysis import ArticleAnalysis as ArticleAnalysisModel
 from app.schemas.article_analysis import ArticleAnalysis
 from app.services.article_topics import TOPICS
-from app.services.gigachat import GigaChatClient
+from app.services.llm import OpenAIClient
 
 
 class ArticleAnalyzer:
     def __init__(self, credentials: str | None = None) -> None:
-        self.client = GigaChatClient(credentials)
+        self.client = OpenAIClient(credentials)
 
     async def analyze(
         self,

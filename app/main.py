@@ -10,11 +10,17 @@ from fastapi.templating import Jinja2Templates
 from app.config.settings import get_settings
 from app.database.session import async_session_factory
 from app.schemas.digest import DigestRequest
+from app.schemas.source import SourceCreate, SourceRead
 from app.services.digest_service import build_digest
 from app.services.digest_task_manager import (
     create_task,
     get_task,
     update_task,
+)
+from app.services.source_service import (
+    create_source,
+    delete_source,
+    list_sources,
 )
 settings = get_settings()
 
@@ -41,6 +47,41 @@ async def index(request: Request):
 async def health_check() -> dict[str, str]:
     return {"status": "ok"}
 
+
+def serialize_source(source) -> SourceRead:
+    return SourceRead(
+        id=source.id,
+        name=source.name,
+        url=source.url,
+        source_type=source.source_type,
+        is_active=source.is_active,
+    )
+
+
+@app.get("/api/sources", response_model=list[SourceRead])
+async def get_sources() -> list[SourceRead]:
+    async with async_session_factory() as session:
+        sources = await list_sources(session)
+    return [serialize_source(source) for source in sources]
+
+
+@app.post("/api/sources", response_model=SourceRead, status_code=201)
+async def add_source(source_data: SourceCreate) -> SourceRead:
+    async with async_session_factory() as session:
+        try:
+            source = await create_source(session, source_data)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return serialize_source(source)
+
+
+@app.delete("/api/sources/{source_id}", status_code=204)
+async def remove_source(source_id: int) -> None:
+    async with async_session_factory() as session:
+        deleted = await delete_source(session, source_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Источник не найден.")
+
 async def _run_digest_task(
     task_id: str,
     credentials: str,
@@ -59,6 +100,11 @@ async def _run_digest_task(
 
         update_task(
             task_id,
+            status="completed",
+            current=result.total_articles,
+            total=result.total_articles,
+            percent=100,
+            message="Дайджест готов.",
             result={
                 "total_articles": result.total_articles,
                 "analyzed": result.analyzed,
